@@ -229,99 +229,108 @@ requirement.
 Package ``hcl``
 -----------------
 
-.. code-block:: go
-
-	func ExprAsKeyword(expr Expression) string
-
-   This function attempts to interpret the given expression as a single keyword,
-   returning that keyword as a string if possible.
-
-   A "keyword" for the purposes of this function is an expression that can be
-   understood as a valid single identifier. For example, the simple variable
-   reference ``foo`` can be interpreted as a keyword, while ``foo.bar``
-   cannot.
-
-   As a special case, the language-level keywords ``true``, ``false``, and
-   ``null`` are also considered to be valid keywords, allowing the calling
-   application to disregard their usual meaning.
-
-   If the given expression cannot be reduced to a single keyword, the result
-   is an empty string. Since an empty string is never a valid keyword, this
-   result unambiguously signals failure.
+`Package documentation <https://pkg.go.dev/github.com/hashicorp/hcl/v2>`_.
 
 .. code-block:: go
 
-	func AbsTraversalForExpr(expr Expression) (Traversal, Diagnostics)
+    func ExprAsKeyword(expr Expression) string
 
-   This is a generalization of ``ExprAsKeyword`` that will accept anything that
-   can be interpreted as a *traversal*, which is a variable name followed by
-   zero or more attribute access or index operators with constant operands.
 
-   For example, all of ``foo``, ``foo.bar`` and ``foo[0]`` are valid
-   traversals, but ``foo[bar]`` is not, because the ``bar`` index is not
-   constant.
+This function attempts to interpret the given expression as a single keyword,
+returning that keyword as a string if possible.
 
-   This is the function that Terraform uses to interpret the items within the
-   ``depends_on`` sequence in our example above.
+A "keyword" for the purposes of this function is an expression that can be
+understood as a valid single identifier. For example, the simple variable
+reference ``foo`` can be interpreted as a keyword, while ``foo.bar``
+cannot.
 
-   As with ``ExprAsKeyword``, this function has a special case that the
-   keywords ``true``, ``false``, and ``null`` will be accepted as if they were
-   variable names by this function, allowing ``null.foo`` to be interpreted
-   as a traversal even though it would be invalid if evaluated.
+As a special case, the language-level keywords ``true``, ``false``, and
+``null`` are also considered to be valid keywords, allowing the calling
+application to disregard their usual meaning.
 
-   If error diagnostics are returned, the traversal result is invalid and
-   should not be used.
+If the given expression cannot be reduced to a single keyword, the result
+is an empty string. Since an empty string is never a valid keyword, this
+result unambiguously signals failure.
 
 .. code-block:: go
 
-	func RelTraversalForExpr(expr Expression) (Traversal, Diagnostics)
+    func AbsTraversalForExpr(expr Expression) (Traversal, Diagnostics)
 
-   This is very similar to ``AbsTraversalForExpr``, but the result is a
-   *relative* traversal, which is one whose first name is considered to be
-   an attribute of some other (implied) object.
 
-   The processing rules are identical to ``AbsTraversalForExpr``, with the
-   only exception being that the first element of the returned traversal is
-   marked as being an attribute, rather than as a root variable.
+This is a generalization of ``ExprAsKeyword`` that will accept anything that
+can be interpreted as a *traversal*, which is a variable name followed by
+zero or more attribute access or index operators with constant operands.
 
-.. code-block:: go
+For example, all of ``foo``, ``foo.bar`` and ``foo[0]`` are valid
+traversals, but ``foo[bar]`` is not, because the ``bar`` index is not
+constant.
 
-	func ExprList(expr Expression) ([]Expression, Diagnostics)
+This is the function that Terraform uses to interpret the items within the
+``depends_on`` sequence in our example above.
 
-   This function requires that the given expression be a tuple constructor,
-   and if so returns a slice of the element expressions in that constructor.
-   Applications can then perform further static analysis on these, or evaluate
-   them as normal.
+As with ``ExprAsKeyword``, this function has a special case that the
+keywords ``true``, ``false``, and ``null`` will be accepted as if they were
+variable names by this function, allowing ``null.foo`` to be interpreted
+as a traversal even though it would be invalid if evaluated.
 
-   If error diagnostics are returned, the result is invalid and should not be
-   used.
-
-   This is the fucntion that Terraform uses to interpret the expression
-   assigned to ``depends_on`` in our example above, then in turn using
-   ``AbsTraversalForExpr`` on each enclosed expression.
+If error diagnostics are returned, the traversal result is invalid and
+should not be used.
 
 .. code-block:: go
 
-	func ExprMap(expr Expression) ([]KeyValuePair, Diagnostics)
+    func RelTraversalForExpr(expr Expression) (Traversal, Diagnostics)
 
-   This function requires that the given expression be an object constructor,
-   and if so returns a slice of the element key/value pairs in that constructor.
-   Applications can then perform further static analysis on these, or evaluate
-   them as normal.
 
-   If error diagnostics are returned, the result is invalid and should not be
-   used.
+This is very similar to ``AbsTraversalForExpr``, but the result is a
+*relative* traversal, which is one whose first name is considered to be
+an attribute of some other (implied) object.
+
+The processing rules are identical to ``AbsTraversalForExpr``, with the
+only exception being that the first element of the returned traversal is
+marked as being an attribute, rather than as a root variable.
 
 .. code-block:: go
 
-	func ExprCall(expr Expression) (*StaticCall, Diagnostics)
+    func ExprList(expr Expression) ([]Expression, Diagnostics)
 
-   This function requires that the given expression be a function call, and
-   if so returns an object describing the name of the called function and
-   expression objects representing the call arguments.
 
-   If error diagnostics are returned, the result is invalid and should not be
-   used.
+This function requires that the given expression be a tuple constructor,
+and if so returns a slice of the element expressions in that constructor.
+Applications can then perform further static analysis on these, or evaluate
+them as normal.
+
+If error diagnostics are returned, the result is invalid and should not be
+used.
+
+This is the fucntion that Terraform uses to interpret the expression
+assigned to ``depends_on`` in our example above, then in turn using
+``AbsTraversalForExpr`` on each enclosed expression.
+
+
+.. code-block:: go
+
+    func ExprMap(expr Expression) ([]KeyValuePair, Diagnostics)
+
+
+This function requires that the given expression be an object constructor,
+and if so returns a slice of the element key/value pairs in that constructor.
+Applications can then perform further static analysis on these, or evaluate
+them as normal.
+
+If error diagnostics are returned, the result is invalid and should not be
+used.
+
+.. code-block:: go
+
+    func ExprCall(expr Expression) (*StaticCall, Diagnostics)
+
+
+This function requires that the given expression be a function call, and
+if so returns an object describing the name of the called function and
+expression objects representing the call arguments.
+
+If error diagnostics are returned, the result is invalid and should not be
+used.
 
 The ``Variables`` method on ``hcl.Expression`` is also considered to be
 a "static analysis" helper, but is built in as a fundamental feature because

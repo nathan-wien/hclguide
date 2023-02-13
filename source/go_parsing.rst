@@ -1,7 +1,7 @@
 .. _go-parsing:
 
-Parsing HCL Input
-=================
+Parsing HCL with the ``hclparse`` package
+=========================================
 
 The first step in processing HCL input provided by a user is to parse it.
 Parsing turns the raw bytes from an input file into a higher-level
@@ -28,6 +28,8 @@ user. We'll cover this in more detail in the next section,
 
 Package ``hclparse``
 --------------------
+
+`Package documentation <https://pkg.go.dev/github.com/hashicorp/hcl/v2/hclparse>`_.
 
 type ``Parser``
 ~~~~~~~~~~~~~~~

@@ -1,10 +1,7 @@
-Package ``gohcl``
------------------
-
 .. _go-decoding-gohcl:
 
-Decoding Into Native Go Values
-==============================
+Decoding Into Native Go Values with the ``gohcl`` package
+=========================================================
 
 The most straightforward way to access the content of an HCL file is to
 decode into native Go values using ``reflect``, similar to the technique used
@@ -52,9 +49,7 @@ By default, all declared attributes and blocks are considered to be required.
 An optional value is indicated by making its field have a pointer type, in
 which case ``nil`` is written to indicate the absense of the argument.
 
-The sections below discuss some additional decoding use-cases. For full details
-on the `gohcl` package, see
-`the godoc reference <https://godoc.org/github.com/hashicorp/hcl2/gohcl>`_.
+`Package documentation <https://pkg.go.dev/github.com/hashicorp/hcl/v2/gohcl>`_.
 
 .. _go-decoding-gohcl-evalcontext:
 

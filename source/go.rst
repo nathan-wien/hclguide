@@ -24,6 +24,7 @@ a Go program.
    go_diagnostics
    go_decoding_gohcl
    go_decoding_hcldec
+   go_cty
    go_expression_eval
    go_decoding_lowlevel
    go_patterns
