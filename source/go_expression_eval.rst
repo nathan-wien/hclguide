@@ -17,11 +17,8 @@ HCL expression evaluation behaves in different cases.
 This section does not discuss in detail the expression syntax itself. For more
 information on that, see the HCL Native Syntax specification.
 
-Package ``hcl``
----------------
-
-Type ``EvalContext``
-~~~~~~~~~~~~~~~~~~~~
+Type ``EvalContext`` (package ``hcl``)
+--------------------------------------
 
    ``hcl.EvalContext`` is the type used to describe the variables and functions
    available during expression evaluation, if any. Its usage is described in

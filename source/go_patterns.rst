@@ -59,7 +59,7 @@ with ``hcl.Body`` fields tagged as "remain".
 
 Once you have a separate body for each top-level block, you can inspect each
 of the attribute expressions inside using the ``Variables`` method on
-``hcl.Expression`, or the ``Variables``` function from package
+``hcl.Expression``, or the ``Variables`` function from package
 ``hcldec`` if you will eventually use its higher-level API to decode as
 Terraform does.
 

@@ -34,7 +34,7 @@ to the more detailed information where needed while using the higher-level APIs
 for the more straightforward portions of a configuration language.
 
 The following subsections will give an overview of the low-level API. For full
-details, see `the godoc reference <https://godoc.org/github.com/hashicorp/hcl2/hcl>`_.
+details, see the `documentation <https://pkg.go.dev/github.com/hashicorp/hcl/v2#section-documentation>`_.
 
 Structural Decoding
 -------------------
@@ -47,11 +47,9 @@ its own body presenting its own content.
 ``hcl.Body`` is a Go interface whose methods serve as the structural
 decoding API:
 
-Package ``hcl``
-^^^^^^^^^^^^^^^
 
-Type ``Body``
-"""""""""""""
+Type ``Body`` (package ``hcl``)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    Represents the structural elements at a particular nesting level.
 
@@ -59,47 +57,47 @@ Type ``Body``
 
 	func (b Body) Content(schema *BodySchema) (*BodyContent, Diagnostics)
 
-      Decode the content from the receiving body using the given schema. The
-      schema is considered exhaustive of all content within the body, and so
-      any elements not covered by the schema will generate error diagnostics.
+Decode the content from the receiving body using the given schema. The
+schema is considered exhaustive of all content within the body, and so
+any elements not covered by the schema will generate error diagnostics.
 
 .. code-block:: go
 
 	func (b Body) PartialContent(schema *BodySchema) (*BodyContent, Body, Diagnostics)
 
-      Similar to `Content`, but allows for additional arguments and block types
-      that are not described in the given schema. The additional body return
-      value is a special body that contains only the *remaining* elements, after
-      extraction of the ones covered by the schema. This returned body can be
-      used to decode the remaining content elsewhere in the calling program.
+Similar to ``Content``, but allows for additional arguments and block types
+that are not described in the given schema. The additional body return
+value is a special body that contains only the *remaining* elements, after
+extraction of the ones covered by the schema. This returned body can be
+used to decode the remaining content elsewhere in the calling program.
 
 .. code-block:: go
 
 	func (b Body) JustAttributes() (Attributes, Diagnostics)
 
-      Decode the content from the receving body in a special *attributes-only*
-      mode, allowing the calling application to enumerate the arguments given
-      inside the body without needing to predict them in schema.
+Decode the content from the receving body in a special *attributes-only*
+mode, allowing the calling application to enumerate the arguments given
+inside the body without needing to predict them in schema.
 
-      When this method is used, a body can be treated somewhat like a map
-      expression, but it still has a rigid structure where the arguments must
-      be given directly with no expression evaluation. This is an advantage for
-      declarations that must themselves be resolved before expression
-      evaluation is possible.
+When this method is used, a body can be treated somewhat like a map
+expression, but it still has a rigid structure where the arguments must
+be given directly with no expression evaluation. This is an advantage for
+declarations that must themselves be resolved before expression
+evaluation is possible.
 
-      If the body contains any blocks, error diagnostics are returned. JSON
-      syntax relies on schema to distinguish arguments from nested blocks, and
-      so a JSON body in attributes-only mode will treat all JSON object
-      properties as arguments.
+If the body contains any blocks, error diagnostics are returned. JSON
+syntax relies on schema to distinguish arguments from nested blocks, and
+so a JSON body in attributes-only mode will treat all JSON object
+properties as arguments.
 
 .. code-block:: go
 
 	func (b Body) MissingItemRange() Range
 
-      Returns a source range that points to where an absent required item in
-      the body might be placed. This is a "best effort" sort of thing, required
-      only to be somewhere inside the receving body, as a way to give source
-      location information for a "missing required argument" sort of error.
+Returns a source range that points to where an absent required item in
+the body might be placed. This is a "best effort" sort of thing, required
+only to be somewhere inside the receving body, as a way to give source
+location information for a "missing required argument" sort of error.
 
 The main content-decoding methods each require a ``hcl.BodySchema``
 object describing the expected content. The fields of this type describe the
@@ -153,56 +151,54 @@ All expression evaluation in the low-level API starts with an
 implementations depending on the expression type and the syntax it was parsed
 from.
 
-Package ``hcl``
-^^^^^^^^^^^^^^^
 
-Type ``Expression``
-"""""""""""""""""""
+Type ``Expression`` (Package ``hcl``)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   Represents a unevaluated single expression.
+Represents a unevaluated single expression.
 
 .. code-block:: go
 
 	func (e Expression) Value(ctx *EvalContext) (cty.Value, Diagnostics)
 
-      Evaluates the receiving expression in the given evaluation context. The
-      result is a ``cty.Value`` representing the result value, along
-      with any diagnostics that were raised during evaluation.
+Evaluates the receiving expression in the given evaluation context. The
+result is a ``cty.Value`` representing the result value, along
+with any diagnostics that were raised during evaluation.
 
-      If the diagnostics contains errors, the value may be incomplete or
-      invalid and should either be discarded altogether or used with care for
-      analysis.
+If the diagnostics contains errors, the value may be incomplete or
+invalid and should either be discarded altogether or used with care for
+analysis.
 
 .. code-block:: go
 
 	func (e Expression) Variables() []Traversal
 
-      Returns information about any nested expressions that access variables
-      from the *global* evaluation context. Does not include references to
-      temporary local variables, such as those generated by a
-      "``for`` expression".
+Returns information about any nested expressions that access variables
+from the *global* evaluation context. Does not include references to
+temporary local variables, such as those generated by a
+"``for`` expression".
 
 .. code-block:: go
 
 	func (e Expression) Range() Range
 
-      Returns the source range for the entire expression. This can be useful
-      when generating application-specific diagnostic messages, such as
-      value validation errors.
+Returns the source range for the entire expression. This can be useful
+when generating application-specific diagnostic messages, such as
+value validation errors.
 
 .. code-block:: go
 
 	func (e Expression) StartRange() Range
 
-      Similar to ``Range``, but if the expression is complex, such as a tuple
-      or object constructor, may indicate only the opening tokens for the
-      construct to avoid creating an overwhelming source code snippet.
+Similar to ``Range``, but if the expression is complex, such as a tuple
+or object constructor, may indicate only the opening tokens for the
+construct to avoid creating an overwhelming source code snippet.
 
-      This should be used in diagnostic messages only in situations where the
-      error is clearly with the construct itself and not with the overall
-      expression. For example, a type error indicating that a tuple was not
-      expected might use ``StartRange`` to draw attention to the beginning
-      of a tuple constructor, without highlighting the entire expression.
+This should be used in diagnostic messages only in situations where the
+error is clearly with the construct itself and not with the overall
+expression. For example, a type error indicating that a tuple was not
+expected might use ``StartRange`` to draw attention to the beginning
+of a tuple constructor, without highlighting the entire expression.
 
 Method ``Value`` is the primary API for expressions, and takes the same kind
 of evaluation context object described in :ref:`go-expression-eval`.
